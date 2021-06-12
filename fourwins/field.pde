@@ -24,4 +24,18 @@ class Field {
       ellipse(_x * 51 + 25, _y * 51 + 25, 45, 45);
     }
   }
+  
+  void setColor(color clr) {
+    _color = clr;
+  }
+  
+  boolean mouseCaptured() {
+    boolean checks = true;
+    checks &= (mouseX > _x * 51        );
+    checks &= (mouseX < _x * 51 + 50);
+    checks &= (mouseY > _y * 51        );
+    checks &= (mouseY < _y * 51 + 50);
+    return checks;
+  }
+  
 };
