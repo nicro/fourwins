@@ -4,36 +4,34 @@ class Button implements Notifyable {
   int _size;
   String _text;
   
-  boolean hovered;
-  boolean clicked;
+  boolean hovered = false;
+  boolean clicked = false;
+  boolean visible = true;
     
   Button(int x, int y, int size, String text) {
     _x = x; _y = y; _size = size; _text = text;
   }
   
-  void render() {
-    if (hovered) fill(127);
-    else if (clicked) fill(64);
-    else fill(255);
-
-    rect(_x, _y, _size, _size);
-    textSize(64);
-    fill(255, 0, 0);
-    text(_text, _x + _size / 5, _y + _size/2);
-  }
-  
   void mouseEvent(MouseEvent e) {
     switch (e) {
-     case Clicked: {
+     case Clicked:
        clicked = mouseCaptured() ? true : false;
-     } break;
-     case Moved: {
+       break;
+     case Moved:
        hovered = mouseCaptured() ? true : false;
-     } break;
-     case Pressed: {
-     } break;
-     case Released: {
-     } break;
+       break;
+     case Draw:
+       if (!visible) return;
+       if (hovered) fill(127);
+       else if (clicked) fill(64);
+       else fill(255);
+       rect(_x, _y, _size, _size,    10, 10, 10, 10);
+       textSize(_size / 5);
+       fill(255, 0, 0);
+       text(_text, _x + _size / 5, _y + _size / 2);
+       break;
+     default:
+       ;
     }
   }
   

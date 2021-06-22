@@ -1,25 +1,41 @@
 import processing.net.*;
 import java.util.Map;
 
-class PlayerData {
-  color _color;
-  PlayerData(color c) {
-    _color = c;
-  }
-}
-
 class ServerGame extends Game {
 
 Server _server;
-int _port = 5204;
 HashMap<String, PlayerData> _ipColorMap = new HashMap<String, PlayerData>();
 PlayerData _currentTurn;
+boolean _gameEnded = false;
 
-ServerGame(PApplet parent, int column, int row) {
+ServerGame(PApplet parent, int port, int column, int row) {
   super(column, row);
-  _server = new Server(parent, _port);
-  _ipColorMap.put("localhost", new PlayerData(color(255, 0, 0)));
+  _server = new Server(parent, port);
+  _ipColorMap.put("localhost", new PlayerData("", color(255, 0, 0)));
   _currentTurn = _ipColorMap.get("localhost");
+  overlay.textLog("Server started");
+}
+
+void exit() {
+  super.exit();
+  _server.stop();
+}
+
+String statusLine() {
+  return super.statusLine() + " - "+ _server.clientCount + " clients connected"
+  + (_gameEnded ? "\nPress (n) to start new game\n" : "");
+}
+
+void winnerFound(color clr, Field field0, Field field1, Field field2, Field field3) {
+  super.winnerFound(clr, field0, field1, field2, field3);
+  _gameEnded = true;
+  String message = " win " + clr + " ";
+  message += field0._x + " " + field0._y + " ";
+  message += field1._x + " " + field1._y + " ";
+  message += field2._x + " " + field2._y + " ";
+  message += field3._x + " " + field3._y + " ";
+  print(message);
+  broadcast(message);
 }
 
 void nextTurn() {
@@ -37,35 +53,33 @@ void nextTurn() {
   _currentTurn = _ipColorMap.get("localhost");
 }
 
-void setup() {
-  textLog("Server started");
-  super.setup();
-}
-
 void connectHandler(Client client) {
-  textLog(client.ip() + " has just connected\n");
+  overlay.textLog(client.ip() + " has just connected\n");
   color clr = color(random(255), random(255), random(255));
-  _ipColorMap.put(client.ip(), new PlayerData(clr));
-  client.write("await-move " + clr);
+  _ipColorMap.put(client.ip(), new PlayerData("", clr));
+  if (client.active())
+    client.write("await-move " + clr);
 }
 
-int make_move(int _, int column) {
+int makeMove(int _, int column) {
   moveHandler("localhost", column);
   return 0;
 }
 
 void broadcast(String msg) {
   for (int i = 0; i < _server.clientCount; i++) {
-    _server.clients[i].write(msg);
+    if (_server.clients[i].active())
+      _server.clients[i].write(msg);
   }
 }
 
 void moveHandler(String ip, int column) {
   PlayerData pd = _ipColorMap.get(ip);
   if (_currentTurn == pd) {
-      textLog("move confirmed: " + pd._color + " " + column);
-      super.make_move(pd._color, column);
+      overlay.textLog("move confirmed: " + pd._color + " " + column);
+      super.makeMove(pd._color, column);
       broadcast("move " + pd._color + " " + column);
+      checkForWinner();
       nextTurn();
   }
 }
@@ -88,13 +102,17 @@ void processMessage(Client client) {
   }
 }
 
-void draw() {
-  background(20);
-  
+void draw() {  
   // listen for clients
   Client thisClient = _server.available();
   if (thisClient !=null) {
     processMessage(thisClient);
+  }
+  
+  if (keyPressed && key == 'n') {
+    _gameEnded = false;
+    reset();
+    broadcast("reset");
   }
   
   super.draw();
