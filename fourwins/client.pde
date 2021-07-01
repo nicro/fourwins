@@ -3,7 +3,6 @@ import processing.net.*;
 class ClientGame extends Game {
 
 Client _client;
-
 boolean _clientTurn = false;
 color _clientColor;
 
@@ -12,7 +11,7 @@ ClientGame(PApplet parent, String host, int port, int columns, int rows) {
   _client = new Client(parent, host, port);
   if (_client.active())
     _client.write("connected");
-  overlay.textLog("connect request sent\n");
+  log("connect request sent\n");
 }
 
 String statusLine() {
@@ -23,13 +22,13 @@ int makeMove(color clr, int column) {
   if (!_clientTurn) return -1;
   if (_client.active())
     _client.write("move " + column);
-  overlay.textLog("sending move " + _clientColor + " " + column);
+  log("sending move " + _clientColor + " " + column);
   return 0;
 }
 
 void exit() {
-  super.exit();
   _client.stop();
+  super.exit();
 }
 
 void processMessage(String msg, int offset) {
@@ -55,7 +54,7 @@ void processMessage(String msg, int offset) {
        } break;
        case "reset": {
          reset();
-         overlay.textLog("reset signal");
+         log("reset signal");
        } break;
        case "win": {
          if (chunks.length < 10 + offset) return;
@@ -69,19 +68,24 @@ void processMessage(String msg, int offset) {
          int c3x = Integer.parseInt(chunks[8 + offset]);
          int c3y = Integer.parseInt(chunks[9 + offset]);
          print(msg);
-         winnerFound(clr, _fields[c0x][c0y], _fields[c1x][c1y], _fields[c2x][c2y],_fields[c3x][c3y]);
+         winnerFound(new Player("unknown player", clr), _fields[c0x][c0y], _fields[c1x][c1y], _fields[c2x][c2y],_fields[c3x][c3y]);
          processMessage(msg + offset, 10);
-         overlay.textLog("win signal");
+         log("win signal");
        } break;
        default: break;
      }
 }
 
-void draw() {
-  String msg = _client.readString();
-  if (msg != null)
-    processMessage(msg, 0);
-  super.draw();
+void mouseEvent(MouseEvent e) {
+  switch (e) {
+    case Draw: {
+        String msg = _client.readString();
+        if (msg != null)
+          processMessage(msg, 0);
+    } break;
+    default: break;
+  }
+  super.mouseEvent(e);
 }
 
 }

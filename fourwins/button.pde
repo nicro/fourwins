@@ -9,17 +9,14 @@ class Button implements Notifyable {
   boolean visible = true;
     
   Button(int x, int y, int size, String text) {
+    registerMouseEvents(this);
     _x = x; _y = y; _size = size; _text = text;
   }
   
   void mouseEvent(MouseEvent e) {
     switch (e) {
-     case Clicked:
-       clicked = mouseCaptured() ? true : false;
-       break;
-     case Moved:
-       hovered = mouseCaptured() ? true : false;
-       break;
+     case Clicked: clicked = mouseCaptured(); break;
+     case Moved:   hovered = mouseCaptured(); break;
      case Draw:
        if (!visible) return;
        if (hovered) fill(127);
@@ -30,9 +27,13 @@ class Button implements Notifyable {
        fill(255, 0, 0);
        text(_text, _x + _size / 5, _y + _size / 2);
        break;
-     default:
-       ;
+     default: break;
     }
+  }
+  
+  void clearEvents() {
+    clicked = false;
+    visible = true;
   }
   
   boolean mouseCaptured() {
