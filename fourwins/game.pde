@@ -6,6 +6,7 @@ enum PlayerMode {
 }
 
 class Player {
+  
   String _name;
   color _color;
   Player(String name, color clr) {
@@ -41,7 +42,7 @@ class Game implements Notifyable {
      if (_players.get(i)._name.equals(name))
        return _players.get(i);
    }
-   return new Player("", no_color);
+   return new Player("", noColor);
   }
   
   Player getPlayerByColor(color clr) {
@@ -49,7 +50,7 @@ class Game implements Notifyable {
      if (_players.get(i)._color == clr)
        return _players.get(i);
    }
-   return new Player("", no_color);
+   return new Player("", noColor);
   }
   
   void log(String line) { // overlay log
@@ -89,10 +90,10 @@ class Game implements Notifyable {
   }
 
   void winnerFound(Player player, Field field0, Field field1, Field field2, Field field3) {
-    field0.winAnimation = true;
-    field1.winAnimation = true;
-    field2.winAnimation = true;
-    field3.winAnimation = true;
+    field0._winAnimation = true;
+    field1._winAnimation = true;
+    field2._winAnimation = true;
+    field3._winAnimation = true;
     _winner = player;
     gameEnded = true;
     log(player._name + " won");
@@ -104,7 +105,7 @@ class Game implements Notifyable {
     {
       for (int column = 0; column < _columns - 3; column++) {
         boolean checks = true;
-        checks &= _fields[column][row]._color != default_field_color;
+        checks &= _fields[column][row]._color != defaultFieldColor;
         checks &= _fields[column][row]._color == _fields[column + 1][row]._color;
         checks &= _fields[column][row]._color == _fields[column + 2][row]._color;
         checks &= _fields[column][row]._color == _fields[column + 3][row]._color;
@@ -126,7 +127,7 @@ class Game implements Notifyable {
     {
       for (int column = 0; column < _columns; column++) {
         boolean checks = true;
-        checks &= _fields[column][row]._color != default_field_color;
+        checks &= _fields[column][row]._color != defaultFieldColor;
         checks &= _fields[column][row]._color == _fields[column][row + 1]._color;
         checks &= _fields[column][row]._color == _fields[column][row + 2]._color;
         checks &= _fields[column][row]._color == _fields[column][row + 3]._color;
@@ -148,7 +149,7 @@ class Game implements Notifyable {
     {
       for (int row = _rows - 1; row > 3; row--) {
         boolean checks = true;
-        checks &= _fields[column][row]._color != default_field_color;
+        checks &= _fields[column][row]._color != defaultFieldColor;
         checks &= _fields[column][row]._color == _fields[column - 1][row - 1]._color;
         checks &= _fields[column][row]._color == _fields[column - 2][row - 2]._color;
         checks &= _fields[column][row]._color == _fields[column - 3][row - 3]._color;
@@ -169,7 +170,7 @@ class Game implements Notifyable {
     for (int row = _rows - 1; row >= 3; row--) {
       for (int column = 0; column < _columns - 3; column++) {
         boolean checks = true;
-        checks &= _fields[column][row]._color != default_field_color;
+        checks &= _fields[column][row]._color != defaultFieldColor;
         checks &= _fields[column][row]._color == _fields[column + 1][row - 1]._color;
         checks &= _fields[column][row]._color == _fields[column + 2][row - 2]._color;
         checks &= _fields[column][row]._color == _fields[column + 3][row - 3]._color;

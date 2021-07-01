@@ -23,15 +23,15 @@ class FourWins implements Notifyable {
   void initIfNeeded(PlayerMode mode) {
     if (_gameInited) return;
     
-    _serverBtn.visible = false;
-    _clientBtn.visible = false;
-    _localBtn.visible = false;
+    _serverBtn._visible = false;
+    _clientBtn._visible = false;
+    _localBtn._visible = false;
     
     switch (mode) {
-     case Client: _game = new ClientGame(_window, "127.0.0.1", 5204, 7, 6); break;
-     case Server: _game = new ServerGame(_window, 5204, 7, 6);              break;
-     case Local:  _game = new LocalGame(7, 6);                              break;
-     case NotSelected: print("mode not selected!");                         break;
+     case Client: _game = new ClientGame(_window, "127.0.0.1", 5204, columns, rows); break;
+     case Server: _game = new ServerGame(_window, 5204, columns, rows); break;
+     case Local:  _game = new LocalGame( columns, rows); break;
+     case NotSelected: print("mode not selected!"); break;
     }
     _game.mode = mode;
     _gameInited = true;
@@ -50,9 +50,9 @@ class FourWins implements Notifyable {
     if (e == MouseEvent.Draw) {
       background(20);
       if (keyPressed && key == 'q') quitGame();
-      if (_serverBtn.clicked) initIfNeeded(PlayerMode.Server);
-      if (_clientBtn.clicked) initIfNeeded(PlayerMode.Client);
-      if ( _localBtn.clicked) initIfNeeded(PlayerMode.Local);
+      if (_serverBtn._clicked) initIfNeeded(PlayerMode.Server);
+      if (_clientBtn._clicked) initIfNeeded(PlayerMode.Client);
+      if ( _localBtn._clicked) initIfNeeded(PlayerMode.Local);
     }
   }
 }

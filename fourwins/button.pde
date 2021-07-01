@@ -1,12 +1,11 @@
 class Button implements Notifyable {
-  int _x;
-  int _y;
-  int _size;
+  
+  int _x, _y, _size;
   String _text;
   
-  boolean hovered = false;
-  boolean clicked = false;
-  boolean visible = true;
+  boolean _hovered = false;
+  boolean _clicked = false;
+  boolean _visible = true;
     
   Button(int x, int y, int size, String text) {
     registerMouseEvents(this);
@@ -15,12 +14,12 @@ class Button implements Notifyable {
   
   void mouseEvent(MouseEvent e) {
     switch (e) {
-     case Clicked: clicked = mouseCaptured(); break;
-     case Moved:   hovered = mouseCaptured(); break;
+     case Clicked: _clicked = mouseCaptured(); break;
+     case Moved:   _hovered = mouseCaptured(); break;
      case Draw:
-       if (!visible) return;
-       if (hovered) fill(127);
-       else if (clicked) fill(64);
+       if (!_visible) return;
+       if (_hovered) fill(127);
+       else if (_clicked) fill(64);
        else fill(255);
        rect(_x, _y, _size, _size,    10, 10, 10, 10);
        textSize(_size / 5);
@@ -32,8 +31,8 @@ class Button implements Notifyable {
   }
   
   void clearEvents() {
-    clicked = false;
-    visible = true;
+    _clicked = false;
+    _visible = true;
   }
   
   boolean mouseCaptured() {
